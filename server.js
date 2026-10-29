@@ -1,16 +1,25 @@
-// Load environment variables from .env
+// Load environment variables
 require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 
 const app = express();
-const PORT = 3000;
 
-// Middleware to read JSON data
+// Use Render's port when deployed, otherwise use 3000 locally
+const PORT = process.env.PORT || 3000;
+
+// Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Connect to MongoDB Atlas
+// Serve frontend files from the project folder
+app.use(express.static(path.join(__dirname)));
+
+
+// ---------------- MONGODB ATLAS CONNECTION ----------------
+
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
         console.log('Connected to MongoDB Atlas successfully!');
@@ -53,17 +62,7 @@ const Weather = mongoose.model('Weather', weatherSchema);
 // ---------------- HOMEPAGE ----------------
 
 app.get('/', (req, res) => {
-    res.send(`
-        <h1>Weather Station API</h1>
-        <p>Server is running successfully!</p>
-
-        <h3>Available API Routes</h3>
-        <ul>
-            <li>GET /weather/now - View the latest weather data</li>
-            <li>POST /weather/update - Save new weather data</li>
-            <li>GET /weather/all - View all weather records</li>
-        </ul>
-    `);
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 
@@ -73,7 +72,7 @@ app.post('/weather/update', async (req, res) => {
     try {
         const { temperature, humidity, status } = req.body;
 
-        // Validate the required fields
+        // Validate data
         if (
             temperature === undefined ||
             humidity === undefined ||
@@ -84,14 +83,14 @@ app.post('/weather/update', async (req, res) => {
             });
         }
 
-        // Create a new weather report
+        // Create weather report
         const newReport = new Weather({
             temperature,
             humidity,
             status
         });
 
-        // Save the report to MongoDB Atlas
+        // Save to MongoDB Atlas
         const savedReport = await newReport.save();
 
         res.status(201).json({
@@ -150,8 +149,21 @@ app.get('/weather/all', async (req, res) => {
 });
 
 
+// ---------------- SERVER STATUS ----------------
+
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        message: 'Weather Station server is running!',
+        database:
+            mongoose.connection.readyState === 1
+                ? 'Connected'
+                : 'Disconnected'
+    });
+});
+
+
 // ---------------- START SERVER ----------------
 
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`Weather Station server running on port ${PORT}`);
 });
