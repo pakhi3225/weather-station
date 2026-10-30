@@ -264,7 +264,7 @@ app.get('/api/cities', (req, res) => {
 });
 
 
-// ---------------- LIVE WEATHER API ----------------
+// ---------------- DEMO WEATHER API ----------------
 
 app.get('/api/weather', async (req, res) => {
     try {
@@ -284,84 +284,233 @@ app.get('/api/weather', async (req, res) => {
             });
         }
 
-        // Fetch live weather for the exact coordinates of the chosen city
-        const url =
-            'https://api.open-meteo.com/v1/forecast' +
-            `?latitude=${place.latitude}&longitude=${place.longitude}` +
-            '&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m' +
-            '&hourly=precipitation_probability' +
-            '&forecast_days=1&timezone=Asia%2FKolkata';
+        // Demo weather data
+        // These are sample values, not live weather readings.
+        const DEMO_WEATHER = {
+            'pune': {
+                temperature: 28,
+                humidity: 65,
+                feelsLike: 30,
+                status: 'Partly cloudy',
+                rainProbability: 20,
+                windSpeed: 12
+            },
+            'mumbai': {
+                temperature: 30,
+                humidity: 78,
+                feelsLike: 34,
+                status: 'Cloudy',
+                rainProbability: 35,
+                windSpeed: 15
+            },
+            'nagpur': {
+                temperature: 32,
+                humidity: 55,
+                feelsLike: 34,
+                status: 'Clear sky',
+                rainProbability: 10,
+                windSpeed: 9
+            },
+            'nashik': {
+                temperature: 27,
+                humidity: 60,
+                feelsLike: 28,
+                status: 'Partly cloudy',
+                rainProbability: 15,
+                windSpeed: 10
+            },
+            'chhatrapati-sambhajinagar': {
+                temperature: 29,
+                humidity: 58,
+                feelsLike: 30,
+                status: 'Clear sky',
+                rainProbability: 12,
+                windSpeed: 11
+            },
+            'thane': {
+                temperature: 30,
+                humidity: 75,
+                feelsLike: 33,
+                status: 'Cloudy',
+                rainProbability: 30,
+                windSpeed: 13
+            },
+            'navi-mumbai': {
+                temperature: 29,
+                humidity: 77,
+                feelsLike: 33,
+                status: 'Partly cloudy',
+                rainProbability: 25,
+                windSpeed: 14
+            },
+            'kolhapur': {
+                temperature: 27,
+                humidity: 68,
+                feelsLike: 29,
+                status: 'Light rain',
+                rainProbability: 45,
+                windSpeed: 12
+            },
+            'solapur': {
+                temperature: 31,
+                humidity: 48,
+                feelsLike: 32,
+                status: 'Clear sky',
+                rainProbability: 8,
+                windSpeed: 10
+            },
+            'amravati': {
+                temperature: 30,
+                humidity: 52,
+                feelsLike: 32,
+                status: 'Partly cloudy',
+                rainProbability: 15,
+                windSpeed: 9
+            },
+            'delhi': {
+                temperature: 29,
+                humidity: 45,
+                feelsLike: 30,
+                status: 'Clear sky',
+                rainProbability: 5,
+                windSpeed: 8
+            },
+            'bengaluru': {
+                temperature: 26,
+                humidity: 65,
+                feelsLike: 27,
+                status: 'Partly cloudy',
+                rainProbability: 20,
+                windSpeed: 12
+            },
+            'hyderabad': {
+                temperature: 30,
+                humidity: 50,
+                feelsLike: 31,
+                status: 'Clear sky',
+                rainProbability: 10,
+                windSpeed: 10
+            },
+            'chennai': {
+                temperature: 31,
+                humidity: 72,
+                feelsLike: 35,
+                status: 'Cloudy',
+                rainProbability: 25,
+                windSpeed: 16
+            },
+            'kolkata': {
+                temperature: 30,
+                humidity: 75,
+                feelsLike: 34,
+                status: 'Cloudy',
+                rainProbability: 35,
+                windSpeed: 13
+            },
+            'ahmedabad': {
+                temperature: 32,
+                humidity: 45,
+                feelsLike: 33,
+                status: 'Clear sky',
+                rainProbability: 5,
+                windSpeed: 9
+            },
+            'jaipur': {
+                temperature: 29,
+                humidity: 40,
+                feelsLike: 29,
+                status: 'Clear sky',
+                rainProbability: 5,
+                windSpeed: 8
+            },
+            'lucknow': {
+                temperature: 30,
+                humidity: 55,
+                feelsLike: 32,
+                status: 'Partly cloudy',
+                rainProbability: 15,
+                windSpeed: 10
+            },
+            'indore': {
+                temperature: 28,
+                humidity: 50,
+                feelsLike: 29,
+                status: 'Partly cloudy',
+                rainProbability: 12,
+                windSpeed: 9
+            },
+            'bhopal': {
+                temperature: 28,
+                humidity: 58,
+                feelsLike: 29,
+                status: 'Partly cloudy',
+                rainProbability: 18,
+                windSpeed: 10
+            },
+            'surat': {
+                temperature: 31,
+                humidity: 70,
+                feelsLike: 35,
+                status: 'Cloudy',
+                rainProbability: 30,
+                windSpeed: 14
+            },
+            'vadodara': {
+                temperature: 31,
+                humidity: 55,
+                feelsLike: 33,
+                status: 'Clear sky',
+                rainProbability: 10,
+                windSpeed: 9
+            },
+            'chandigarh': {
+                temperature: 27,
+                humidity: 48,
+                feelsLike: 27,
+                status: 'Partly cloudy',
+                rainProbability: 10,
+                windSpeed: 8
+            },
+            'kochi': {
+                temperature: 29,
+                humidity: 80,
+                feelsLike: 34,
+                status: 'Cloudy',
+                rainProbability: 40,
+                windSpeed: 15
+            },
+            'visakhapatnam': {
+                temperature: 30,
+                humidity: 72,
+                feelsLike: 34,
+                status: 'Partly cloudy',
+                rainProbability: 25,
+                windSpeed: 14
+            }
+        };
 
-        const weatherResponse = await fetch(url, {
-            signal: AbortSignal.timeout(10000)
-        });
-
-        // NEW: Log the actual upstream weather API error
-        if (!weatherResponse.ok) {
-            const errorDetails = await weatherResponse.text();
-
-            console.error(
-                'Open-Meteo error status:',
-                weatherResponse.status
-            );
-
-            console.error(
-                'Open-Meteo error details:',
-                errorDetails
-            );
-
-            throw new Error(
-                `Weather service returned HTTP ${weatherResponse.status}`
-            );
-        }
-
-        const weatherData = await weatherResponse.json();
-        const current = weatherData.current;
-
-        if (!current) {
-            throw new Error('Weather service returned no current data.');
-        }
-
-        // Find precipitation probability for the current hour
-        const currentHour = current.time.slice(0, 13);
-
-        const hourlyTimes =
-            (weatherData.hourly && weatherData.hourly.time) || [];
-
-        const hourlyIndex = hourlyTimes.findIndex(
-            time => time.slice(0, 13) === currentHour
-        );
-
-        const rainProbability =
-            hourlyIndex >= 0
-                ? weatherData.hourly.precipitation_probability[hourlyIndex]
-                : 0;
+        const weather = DEMO_WEATHER[place.id];
 
         res.json({
             id: place.id,
             location: `${place.name}, ${place.state}, India`,
-            temperature: current.temperature_2m,
-            humidity: current.relative_humidity_2m,
-            feelsLike: current.apparent_temperature,
-            status: WEATHER_CONDITIONS[current.weather_code] || 'Unknown',
-            rainProbability: rainProbability,
-            windSpeed: current.wind_speed_10m,
-            timestamp: current.time,
+            temperature: weather.temperature,
+            humidity: weather.humidity,
+            feelsLike: weather.feelsLike,
+            status: weather.status,
+            rainProbability: weather.rainProbability,
+            windSpeed: weather.windSpeed,
+            timestamp: new Date().toISOString(),
             fetchedAt: new Date().toISOString(),
-            timezone: weatherData.timezone
+            timezone: 'Asia/Kolkata',
+            demo: true
         });
 
     } catch (error) {
-        console.error('Live weather error:', error.message);
+        console.error('Demo weather error:', error.message);
 
-        const timedOut =
-            error.name === 'TimeoutError' ||
-            error.name === 'AbortError';
-
-        res.status(timedOut ? 504 : 500).json({
-            message: timedOut
-                ? 'The weather service took too long to respond. Please try again.'
-                : 'Unable to fetch live weather right now.',
+        res.status(500).json({
+            message: 'Unable to fetch demo weather data.',
             error: error.message
         });
     }
